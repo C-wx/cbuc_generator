@@ -1,0 +1,48 @@
+package ${package}.${moduleName}.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import ${mainPath}.common.utils.PageUtils;
+import ${package}.${moduleName}.entity.${className}Entity;
+
+import java.util.Map;
+
+/**
+ /**
+ * @Description:
+ * @Author: ${author}
+ * @Date: Create in ${datetime}
+ */
+public interface ${className}Service {
+
+    /**
+     * 查询列表数据
+     *
+     * @param ${classname} 查询条件
+     * @param page       页码
+     * @param size       每页的数量
+     */
+    PageInfo<${className}> queryList(${className} ${className}, Integer page, Integer size);
+
+    /**
+     * 添加数据信息
+     *
+     * @param ${classname} 添加实体
+     */
+    int insertSelective(${className} ${className});
+
+    /**
+     * 修改${classname}信息
+     *
+     * @param ${classname} 修改内容实体
+     */
+    int updateByPrimaryKeySelective(${className} ${className});
+
+    /**
+     * 删除${classname}信息
+     *
+     * @param ${classname} 修改内容实体
+     */
+    int deleteByPrimaryKey(Integer id);
+
+}
+

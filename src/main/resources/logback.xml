@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+	<!--日志路径 -->
+	<property name="LOG_HOME" value="/mnt/disk1/home/admin/policeofficeb/logs" />
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+<!--			<pattern>%d{yyyy-MM-dd-HH:mm:ss.SSS} |-%-5level [%thread] %logger.%class{0}#%method [%file:%line] %msg%n</pattern>-->
+			<!--彩色日志-->
+			<pattern>%magenta(%d{yyyy-MM-dd-HH:mm:ss.SSS}) |%highlight(-%-5level) %green([%thread]) %yellow([Request-ID:%X{requestId}]) %cyan(%logger.%class{0}#%method [%file:%line]) %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!--根logger控制-->
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+
+	<!--产品WEB日志文件-->
+	<appender name="LOING_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${LOG_HOME}/policeofficeb_collect-%d{yyyyMMdd}-%i.log</FileNamePattern>
+			<MaxHistory>1</MaxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>500MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="com.aliyun.policebrain.common.log" level="INFO" additivity="false">
+		<appender-ref ref="LOING_LOG_FILE"/>
+		<!--<appender-ref ref="STDOUT" />-->
+	</logger>
+
+
+	<appender name="policeofficeb" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/policeofficeb.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/policeofficeb.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<!--<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>100KB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>-->
+			<maxHistory>2</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{yyyy-MM-dd-HH:mm:ss.SSS} |-%-5level [%thread] %logger.%class{0}#%method [%file:%line] %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="com.aliyun.apsarabrain"  level="INFO" additivity="false">
+		<appender-ref ref="policeofficeb" />
+	</logger>
+
+
+
+	<appender name="WARN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/WARN_FILE.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/WARN_FILE.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<!--<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>1KB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>-->
+			<maxHistory>5</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{yyyy-MM-dd-HH:mm:ss.SSS} |-%-5level [%thread] %logger.%class{0}#%method [%file:%line] %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	<logger name="com.aliyun.apsarabrain"  level="WARN" additivity="false">
+		<appender-ref ref="WARN_FILE" />
+	</logger>
+	<logger name="com.aliyun.apsarabrain"  level="INFO" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<!--<logger name="org.apache" level="DEBUG" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+	<logger name="org.apache.httpclient.wire" level="DEBUG" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>-->
+
+
+	<!--API日志文件-->
+	<appender name="logAspectAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--<File>${LOG_HOME}/api.log</File>-->
+		<File>/etc/log_audit/operator_logs/znspskfx_operator_log.log</File>
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/api.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="com.aliyun.apsarabrain.base.web.interceptor.LogAspect" level="INFO" additivity="false">
+		<appender-ref ref="logAspectAppender" />
+		<!--<appender-ref ref="STDOUT" />-->
+	</logger>
+
+
+	<!--外部接口调用日志文件-->
+	<appender name="logUtilAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/outer_service_call.log</File>
+		<append>true</append>
+		<!--<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<Prudent>true</Prudent>-->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/outer_service_call.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="com.aliyun.apsarabrain.policeofficeb.common.util.LogUtil" level="INFO" additivity="false">
+		<appender-ref ref="logUtilAppender" />
+	</logger>
+
+
+	<!--图搜专用日志文件-->
+	<appender name="SearchImageLogUtilAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/search_image.log</File>
+		<append>true</append>
+		<!--<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<Prudent>true</Prudent>-->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/search_image.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="com.aliyun.apsarabrain.policeofficeb.common.util.SearchImageLogUtil" level="INFO" additivity="false">
+		<appender-ref ref="SearchImageLogUtilAppender" />
+	</logger>
+
+
+
+	<!--布控专用日志文件-->
+	<appender name="warnOperateAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/do_warn.log</File>
+		<append>true</append>
+		<!--<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<Prudent>true</Prudent>-->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/do_warn.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>3</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%d{yyyy-MM-dd-HH:mm:ss.SSS} |-%-5level [%thread] %logger.%class{0}#%method [%file:%line] %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="com.aliyun.apsarabrain.policeofficeb.web.bk" level="INFO" additivity="false">
+		<appender-ref ref="warnOperateAppender" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+	<logger name="com.aliyun.apsarabrain.policeofficeb.biz.warn" level="INFO" additivity="false">
+		<appender-ref ref="warnOperateAppender" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+
+	<!--属性布控消费专用日志文件-->
+	<appender name="attributeWarnKafkaAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/attributeWarn_kafka.log</File>
+		<append>true</append>
+		<!--<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<Prudent>true</Prudent>-->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/attributeWarn_kafka.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>3</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%d{yyyy-MM-dd-HH:mm:ss.SSS} |-%-5level [%thread] %logger.%class{0}#%method [%file:%line] %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="com.aliyun.apsarabrain.policeofficeb.web.bk.task.kafkaconsumer.AttributeKafkaConsumerTask" level="INFO" additivity="false">
+		<appender-ref ref="attributeWarnKafkaAppender" />
+		<!--<appender-ref ref="STDOUT" />-->
+	</logger>
+	<logger name="com.aliyun.apsarabrain.policeofficeb.web.bk.task.kafkaconsumer.VCSAttributeWarnResultConsumer" level="INFO" additivity="false">
+		<appender-ref ref="attributeWarnKafkaAppender" />
+		<!--<appender-ref ref="STDOUT" />-->
+	</logger>
+
+
+	<!--外部业务大屏轨迹专用日志文件-->
+	<appender name="WbyeDpgjLogUtilAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/wbye_dpgj.log</File>
+		<append>true</append>
+		<!--<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<Prudent>true</Prudent>-->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/wbye_dpgj.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="com.aliyun.apsarabrain.policeofficeb.common.util.WbyeDpgjLogUtil" level="INFO" additivity="false">
+		<appender-ref ref="WbyeDpgjLogUtilAppender" />
+	</logger>
+
+
+	<!--实时追踪专用日志文件-->
+	<appender name="VideoTrackLogUtilAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/video_track.log</File>
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/video_track.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="com.aliyun.apsarabrain.policeofficeb.common.util.VideoTrackLogUtil" level="INFO" additivity="false">
+		<appender-ref ref="VideoTrackLogUtilAppender" />
+	</logger>
+
+	<!--redis异常日志文件-->
+	<appender name="redisAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/redis.log</File>
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/redis.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="redisLogger" level="INFO" additivity="false">
+		<appender-ref ref="redisAppender" />
+		<!--<appender-ref ref="STDOUT" />-->
+	</logger>
+
+	<!--rds异常日志文件-->
+	<appender name="rdsAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/rds.log</File>
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/rds.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="rdsLogger" level="INFO" additivity="false">
+		<appender-ref ref="rdsAppender" />
+		<!--<appender-ref ref="STDOUT" />-->
+	</logger>
+	<!--图搜自检定时任务日志文件-->
+	<appender name="imgSearchAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/img_search.log</File>
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/img_search.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="imgSearchLogger" level="INFO" additivity="false">
+		<appender-ref ref="imgSearchAppender" />
+		<!--<appender-ref ref="STDOUT" />-->
+	</logger>
+
+
+
+	<!--人脸搜索专用日志文件-->
+	<appender name="FaceSearchLogUtilAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/face_search.log</File>
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/face_search.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="com.aliyun.apsarabrain.policeofficeb.common.util.FaceSearchLogUtil" level="INFO" additivity="false">
+		<appender-ref ref="FaceSearchLogUtilAppender" />
+	</logger>
+
+	<!--大屏日志文件-->
+	<appender name="dPLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/dPLog.log</File>
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/dPLog.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>2</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="com.aliyun.apsarabrain.policeofficeb.biz.wbywdpgj.DpgjServiceImpl" level="INFO" additivity="false">
+		<appender-ref ref="dPLog" />
+		<!--<appender-ref ref="STDOUT" />-->
+	</logger>
+
+	<!--推送布控消息日志文件-->
+	<appender name="sendWarnResultTaskAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/sendWarnResultTask.log</File>
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/sendWarnResultTask.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>2</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%d{yyyy-MM-dd-HH:mm:ss.SSS} |-%-5level [%thread] %logger.%class{0}#%method [%file:%line] %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="com.aliyun.apsarabrain.policeofficeb.web.bk.task.SendWarnResultTask" level="INFO" additivity="false">
+		<appender-ref ref="sendWarnResultTaskAppender" />
+		<!--<appender-ref ref="STDOUT" />-->
+	</logger>
+
+	<!--清理s3,oss离线视频日志文件-->
+	<appender name="clearStorageOfflineVideoTaskAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/clearStorageOfflineVideoTask.log</File>
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/clearStorageOfflineVideoTask.log_%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>2</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%magenta(%d{yyyy-MM-dd-HH:mm:ss.SSS}) |%highlight(-%-5level) %green([%thread]) %yellow([Request-ID:%X{requestId}]) %cyan(%logger.%class{0}#%method [%file:%line]) %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="com.aliyun.apsarabrain.policeofficeb.web.video.task.ClearStorageOfflineVideoTask" level="INFO" additivity="false">
+		<appender-ref ref="clearStorageOfflineVideoTaskAppender" />
+		<!--<appender-ref ref="STDOUT" />-->
+	</logger>
+
+</configuration>

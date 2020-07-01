@@ -1,0 +1,14 @@
+package ${package}.${moduleName}.dao;
+
+import ${package}.${moduleName}.entity.${className}Entity;
+import org.apache.ibatis.annotations.Mapper;
+
+/**
+ * @Description:
+ * @Author: ${author}
+ * @Date: Create in ${datetime}
+ */
+@Mapper
+public interface ${className}Mapper extends BaseMapper<${className}Entity> {
+	
+}

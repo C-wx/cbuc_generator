@@ -1,0 +1,138 @@
+package ${package}.${moduleName}.controller;
+
+import java.util.Arrays;
+import java.util.Map;
+
+import cbuc.life.entity.Result;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import ${package}.${moduleName}.entity.${className}Entity;
+import ${package}.${moduleName}.service.${className}Service;
+import ${mainPath}.common.utils.PageUtils;
+import ${mainPath}.common.utils.R;
+
+
+/**
+ * @Description:
+ * @Author: ${author}
+ * @Date: Create in ${datetime}
+ */
+@RestController
+@RequestMapping("/${className}Api" )
+public class ${className}Api {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private ${className}Service ${classname}Service;
+
+    /**
+     * 查询列表数据
+     *
+     * @param ${classname} 查询条件
+     * @param page       页码
+     * @param size       每页的数量
+     */
+    @RequestMapping("/list" )
+    @ApiLog(name = "查询列表数据" )
+    public Result qurey${classname}List(@RequestBody(required = false) ${classname} ${classname}, Integer page, Integer size) throws Exception {
+        LOGGER.info("qurey${classname}List|condition={},page={},size={}" , JSON.toJSONString(${classname}), page, size);
+        try {
+            PageInfo<${classname}> ${classname}s = ${classname}Service.queryList(${classname}, page, size);
+            PageResult pageResult = new PageResult(${classname}s);
+            return sendOK(pageResult);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new Exception("查询字典配置列表 出错" );
+        }
+        return sendOK(page);
+    }
+
+
+    /**
+     * 根据主键查询${classname}信息
+     *
+     * @param ${pk.attrname} 查询实体主键
+     */
+    @RequestMapping("/get/{${pk.attrname}}" )
+    @ApiLog(name = "根据主键查询${classname}信息" )
+    public Result query${classname}Info(@PathVariable("${pk.attrname}" ) ${pk.attrType} ${pk.attrname}) {
+        LOGGER.info("query${classname}Info|id={}" , JSON.toJSONString(${pk.attrname}));
+        if (null == ${pk.attrname}) {
+            return sendError(${pk.attrname}+"不能为空!" );
+        }
+        ${className} ${classname} =${classname}Service.selectByPrimaryId(${pk.attrname});
+        return sendOk(${classname});
+    }
+
+    /**
+     * 添加数据信息
+     *
+     * @param ${classname} 添加实体
+     */
+    @RequestMapping("/save" )
+    @ApiLog(name = "添加${classname}信息" )
+    public Result save${classname}(@RequestBody ${className} ${classname}) {
+        LOGGER.info("save${classname}|${className}={}" , JSON.toJSONString(${classname}));
+        try {
+                ${classname}Service.insertSelective(${classname});
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new Exception("添加${className}出错:" + e.getMessage());
+        }
+        return sendOk("操作成功" );
+    }
+
+    /**
+     * 修改${classname}信息
+     *
+     * @param ${classname} 修改内容实体
+     */
+    @RequestMapping("/update" )
+    @ApiLog(name = "修改${classname}信息" )
+    public Result update${classname}(@RequestBody ${className} ${classname}) {
+        LOGGER.info("update${classname}|${className}={}" , JSON.toJSONString(${className}));
+        try {
+            Integer id = ${classname}.getId();
+            if (null != id) {
+                    ${classname}Service.updateByPrimaryKeySelective(${className})
+                return sendOK("更新成功" );
+            } else {
+                throw new Exception("主键id不能为空!" );
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new Exception("更新${classname}出错:" + e.getMessage());
+        }
+    }
+
+    /**
+     * 删除${classname}信息
+     *
+     * @param ${classname} 修改内容实体
+     */
+    @RequestMapping("/delete" )
+    @ApiLog(name = "修改${classname}信息" )
+    public Result delete${classname}(@RequestBody ${className} ${classname}) {
+        LOGGER.info("delete${classname}|${className}={}" , JSON.toJSONString(${className}));
+        try {
+            Integer id = ${classname}.getId();
+            if (null != id) {
+                    ${classname}Service.deleteByPrimaryKey(id)
+                return sendOK("删除成功" );
+            } else {
+                throw new Exception("主键id不能为空!" );
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new Exception("删除${classname}出错:" + e.getMessage());
+        }
+    }
+
+}

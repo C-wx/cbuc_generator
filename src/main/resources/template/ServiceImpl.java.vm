@@ -1,0 +1,75 @@
+package ${package}.${moduleName}.service.impl;
+
+import org.springframework.stereotype.Service;
+import java.util.Map;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import ${mainPath}.common.utils.PageUtils;
+import ${mainPath}.common.utils.Query;
+
+import ${package}.${moduleName}.dao.${className}Dao;
+import ${package}.${moduleName}.entity.${className}Entity;
+import ${package}.${moduleName}.service.${className}Service;
+
+/**
+ * @Description:
+ * @Author: ${author}
+ * @Date: Create in ${datetime}
+ */
+@Service
+public class ${className}ServiceImpl implements ${className}Service {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private ${className}Mapper ${className}Mapper;
+
+    /**
+     * 查询列表数据
+     *
+     * @param ${classname} 查询条件
+     * @param page       页码
+     * @param size       每页的数量
+     */
+    @Override
+    public PageInfo<${className}> queryList(${className} ${className}, Integer page, Integer size) {
+        if (page != null && size != null) {
+            PageHelper.startPage(page, size);
+        }
+        List<${className}> ${className}List = ${className}Mapper.queryList(${className});
+        PageInfo<${className}> pageInfo = new PageInfo<>(${className}List);
+        return pageInfo;
+    }
+
+    /**
+     * 添加数据信息
+     *
+     * @param ${classname} 添加实体
+     */
+    @Override
+    public int insertSelective(${className} ${className}) {
+        return ${className}Mapper.insertSelective(${className});
+    }
+
+    /**
+     * 修改${classname}信息
+     *
+     * @param ${classname} 修改内容实体
+     */
+    @Override
+    public int updateByPrimaryKeySelective(${className} ${className}) {
+        return ${className}Mapper.updateByPrimaryKeySelective(${className});
+    }
+
+    /**
+     * 删除${classname}信息
+     *
+     * @param ${classname} 修改内容实体
+     */
+    @Override
+    public int deleteByPrimaryKey(Integer id) {
+        return ${className}Mapper.deleteByPrimaryKey(id);
+    }
+
+}
