@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -44,6 +46,9 @@ public class GenUtils {
     public static List<String> getTemplates() {
         List<String> templates = new ArrayList<String>();
         templates.add("template/Entity.java.vm");
+        templates.add("template/EntityDTO.java.vm");
+        templates.add("template/EntityQuery.java.vm");
+        templates.add("template/EntityVO.java.vm");
         templates.add("template/Dao.java.vm");
         templates.add("template/Dao.xml.vm");
         templates.add("template/Service.java.vm");
@@ -52,6 +57,21 @@ public class GenUtils {
         return templates;
     }
 
+    private static Pattern linePattern = Pattern.compile("_(\\w)");
+
+    /**
+     * 下划线转驼峰
+     */
+    public static String lineToHump(String str) {
+        str = str.toLowerCase();
+        Matcher matcher = linePattern.matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
 
     /**
      * 生成代码
@@ -63,12 +83,24 @@ public class GenUtils {
         boolean hasBigDecimal = false;
         //表信息
         TableEntity tableEntity = new TableEntity();
+        String tableName = lineToHump(StringUtils.uncapitalize(table.get("tableName")));
+        char[] words = tableName.toCharArray();
+        int pos = 0;
+        for (int i = 0; i < words.length; i++) {
+            if (words[i] < 97) {
+                pos = i;
+                break;
+            }
+        }
+        tableName = tableName.substring(pos);
+
         tableEntity.setTableName(table.get("tableName"));
         tableEntity.setComments(table.get("tableComment"));
         //表名转换成Java类名
         String className = tableToJava(tableEntity.getTableName(), tablePrefix);
         tableEntity.setClassName(className);
-        tableEntity.setClassname(StringUtils.uncapitalize(className));
+        tableEntity.setClassname(tableName);
+        tableEntity.setConstantName(StringUtils.uncapitalize(tableName));
 
         //列信息
         List<ColumnEntity> columsList = new ArrayList<>();
@@ -113,6 +145,7 @@ public class GenUtils {
         Map<String, Object> map = new HashMap<>();
         map.put("tableName", tableEntity.getTableName());
         map.put("comments", tableEntity.getComments());
+        map.put("constantName",tableEntity.getConstantName());
         map.put("pk", tableEntity.getPk());
         map.put("className", tableEntity.getClassName());
         map.put("classname", tableEntity.getClassname());
@@ -136,7 +169,7 @@ public class GenUtils {
 
             try {
                 //添加到zip
-                zip.putNextEntry(new ZipEntry(getFileName(template, tableEntity.getClassName(), packageName, moduleName)));
+                zip.putNextEntry(new ZipEntry(getFileName(template, tableEntity.getClassname(), packageName, moduleName)));
                 IOUtils.write(sw.toString(), zip, "UTF-8");
                 IOUtils.closeQuietly(sw);
                 zip.closeEntry();
@@ -185,11 +218,23 @@ public class GenUtils {
         }
 
         if (template.contains("Entity.java.vm")) {
-            return packagePath + "entity" + File.separator + className + "Entity.java";
+            return packagePath + "entity" + File.separator + className + ".java";
+        }
+
+        if (template.contains("EntityDTO.java.vm")) {
+            return packagePath + "entity" + File.separator + className + "DTO.java";
+        }
+
+        if (template.contains("EntityQuery.java.vm")) {
+            return packagePath + "entity" + File.separator + className + "Query.java";
+        }
+
+        if (template.contains("EntityVO.java.vm")) {
+            return packagePath + "entity" + File.separator + className + "VO.java";
         }
 
         if (template.contains("Dao.java.vm")) {
-            return packagePath + "dao" + File.separator + className + "Dao.java";
+            return packagePath + "dao" + File.separator + className + "Mapper.java";
         }
 
         if (template.contains("Service.java.vm")) {
@@ -208,5 +253,10 @@ public class GenUtils {
             return "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + moduleName + File.separator + className + "Dao.xml";
         }
         return null;
+    }
+
+    public static void main(String[] args) {
+        String str = "electric_reportService";
+        System.out.println(StringUtils.uncapitalize(str));
     }
 }

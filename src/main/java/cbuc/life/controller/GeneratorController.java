@@ -50,12 +50,10 @@ public class GeneratorController {
     @RequestMapping("/code")
     public void code(String tables, HttpServletResponse response) throws IOException {
         byte[] data = generatorService.generatorCode(tables.split(","));
-
         response.reset();
-        response.setHeader("Content-Disposition", "attachment; filename=\"renren.zip\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"cbuc_code.zip\"");
         response.addHeader("Content-Length", "" + data.length);
         response.setContentType("application/octet-stream; charset=UTF-8");
-
         IOUtils.write(data, response.getOutputStream());
     }
 

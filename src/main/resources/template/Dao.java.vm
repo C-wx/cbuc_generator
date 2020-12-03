@@ -9,6 +9,45 @@ import org.apache.ibatis.annotations.Mapper;
  * @Date: Create in ${datetime}
  */
 @Mapper
-public interface ${className}Mapper extends BaseMapper<${className}Entity> {
-	
+public interface ${className}Mapper {
+
+    /**
+     * 查询列表数据
+     *
+     * @param query 查询条件
+     * @return 列表数据
+     */
+    List<${className}VO> queryList(${classname}Query query);
+
+    /**
+     * 单体查询
+     *
+     * @param ${pk.attrname} 实体主键
+     * @return 单体数据
+     */
+    ${classname}VO selectByPrimaryId(${pk.attrType} ${pk.attrname});
+
+    /**
+     * 单体添加
+     *
+     * @param insertDTO 插入POJO
+     * @return 插入状态标识
+     */
+    int insertSelective(${classname}DTO insertDTO);
+
+    /**
+     * 单体更新
+     *
+     * @param updateDTO 更新POJO
+     * @return 更新状态标识
+     */
+    int updateByPrimaryKeySelective(${classname}DTO updateDTO);
+
+    /**
+     * 单体删除
+     *
+     * @param ${pk.attrname} 实体主键
+     * @return 删除状态标识
+     */
+    int deleteByPrimaryKey(${pk.attrType} ${pk.attrname});
 }

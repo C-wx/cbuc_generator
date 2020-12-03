@@ -3,13 +3,83 @@
 
 <mapper namespace="${package}.${moduleName}.mapper.${className}Mapper">
 
-    <resultMap type="${package}.${moduleName}.entity.${className}Entity" id="${classname}Map">
+    <resultMap id="BaseColumnMap" type="${package}.${moduleName}.entity.${className}VO">
         #foreach($column in $columns)
             <result property="${column.attrname}" column="${column.columnName}"/>
         #end
     </resultMap>
 
+    <!--表名-->
+    <sql id="table_name">
+        ${tableName}
+    </sql>
 
+    <!--字段列表-->
+    <sql id="BaseColumns">
+        #foreach($column in $columns)
+            `${column.columnName}`,
+        #end
+    </sql>
 
+    <!--查询列表数据-->
+    <select id="queryList" resultMap="BaseColumnMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM ${className}
+        <where>
+            #foreach($column in $columns)
+                <if test="${column.columnName} != null and ${column.columnName} != ''">
+                    AND `${column.columnName}` = #{},
+                </if>
+            #end
+        </where>
+    </select>
+
+    <!--单体查询-->
+    <select id="selectByPrimaryId" resultMap="BaseColumnMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM <include refid="table_name"/>
+        WHERE id = #{id}
+    </select>
+
+    <!--单体添加-->
+    <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true">
+        INSERT IGNORE INTO
+        <include refid="table_name"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            #foreach($column in $columns)
+                <if test="${column.columnName} != null and ${column.columnName} != ''">
+                    `${column.columnName}`,
+                </if>
+            #end
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            #foreach($column in $columns)
+                <if test="${column.columnName} != null and ${column.columnName} != ''">
+                    #{},
+                </if>
+            #end
+        </trim>
+    </insert>
+
+    <!--单体更新-->
+    <update id="updateByPrimaryKeySelective">
+        UPDATE
+        <include refid="table_name"/>
+        <set>
+            #foreach($column in $columns)
+                <if test="${column.columnName} != null and ${column.columnName} != ''">
+                    `${column.columnName}`= #{},
+                </if>
+            #end
+        </set>
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--单体删除-->
+    <delete id="deleteByPrimaryKey">
+        DELETE FROM
+        <include refid="table_name"/>
+        WHERE id = #{id,jdbcType=INTEGER}
+    </delete>
 
 </mapper>

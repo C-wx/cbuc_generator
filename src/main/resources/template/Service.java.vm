@@ -12,37 +12,49 @@ import java.util.Map;
  * @Author: ${author}
  * @Date: Create in ${datetime}
  */
-public interface ${className}Service {
+public interface ${classname}Service {
 
     /**
      * 查询列表数据
      *
-     * @param ${classname} 查询条件
-     * @param page       页码
-     * @param size       每页的数量
+     * @param ${constantName} 查询条件
+     * @param page            页码
+     * @param size            每页的数量
+     * @return 列表数据
      */
-    PageInfo<${className}> queryList(${className} ${className}, Integer page, Integer size);
+    PageInfo<${classname}VO> queryList(${classname} ${constantName}, Integer page, Integer size);
 
     /**
-     * 添加数据信息
+     * 单体查询
      *
-     * @param ${classname} 添加实体
+     * @param ${pk.attrname} 实体主键
+     * @return 单体数据
      */
-    int insertSelective(${className} ${className});
+    ${className}VO get${classname}Info(${pk.attrType} ${pk.attrname});
 
     /**
-     * 修改${classname}信息
+     * 单体添加
      *
-     * @param ${classname} 修改内容实体
+     * @param insertDTO 添加实体
+     * @return 插入状态标识
      */
-    int updateByPrimaryKeySelective(${className} ${className});
+    int insertSelective(${classname} insertDTO);
 
     /**
-     * 删除${classname}信息
+     * 单体更新
      *
-     * @param ${classname} 修改内容实体
+     * @param updateDTO 更新实体
+     * @return 更新状态标识
      */
-    int deleteByPrimaryKey(Integer id);
+    int updateByPrimaryKeySelective(${classname} updateDTO);
+
+    /**
+     * 单体删除
+     *
+     * @param ${classname} 删除实体
+     * @return 删除状态标识
+     */
+    int deleteByPrimaryKey(${pk.attrType} ${pk.attrname});
 
 }
 

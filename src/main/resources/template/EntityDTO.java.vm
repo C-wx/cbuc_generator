@@ -12,18 +12,18 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * @Description: ${className}信息POJO
+ * @Description: ${className}转换POJO
  * @Author: ${author}
  * @Date: Create in ${datetime}
  */
 @Data
-public class ${className} {
+public class ${className}DTO {
 
     #foreach ($column in $columns)
-        /**
-         * $column.comments
-         */
-        private $column.attrType $column.attrname;
+    /**
+     * $column.comments
+     */
+    private $column.attrType $column.attrname;
     #end
 
 }

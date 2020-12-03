@@ -1,13 +1,11 @@
 package cbuc.life.entity;
 
+import lombok.Data;
+
 import java.util.List;
 
 /**
  * 表数据
- * 
- * @author chenshun
- * @email sunlightcs@gmail.com
- * @date 2016年12月20日 上午12:02:55
  */
 public class TableEntity {
 	//表的名称
@@ -23,7 +21,9 @@ public class TableEntity {
 	private String className;
 	//类名(第一个字母小写)，如：sys_user => sysUser
 	private String classname;
-	
+
+    private String constantName;
+
 	public String getTableName() {
 		return tableName;
 	}
@@ -60,4 +60,12 @@ public class TableEntity {
 	public void setClassname(String classname) {
 		this.classname = classname;
 	}
+
+    public String getConstantName() {
+        return constantName;
+    }
+
+    public void setConstantName(String constantName) {
+        this.constantName = constantName;
+    }
 }
